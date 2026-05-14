@@ -1,0 +1,81 @@
+import { Segments, Joi } from 'celebrate';
+import { isValidObjectId } from 'mongoose';
+
+export const getAllNotesSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(5).max(20).default(10),
+    search: Joi.string().trim().allow(''),
+    tag: Joi.string()
+      .valid(
+        'Work',
+        'Meeting',
+        'Personal',
+        'Shopping',
+        'Ideas',
+        'Travel',
+        'Finance',
+        'Health',
+        'Important',
+        'Todo',
+      )
+      .optional(),
+  }),
+};
+
+const objectIdValidator = (value, helpers) => {
+  if (!isValidObjectId(value)) {
+    return helpers.message('Invalid note ID');
+  }
+  return value;
+};
+
+export const noteIdSchema = {
+  [Segments.PARAMS]: Joi.object({
+    noteId: Joi.string().custom(objectIdValidator).required(),
+  }),
+};
+export const createNoteSchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(1).required(),
+    content: Joi.string().allow('').optional(),
+    tag: Joi.string()
+      .valid(
+        'Work',
+        'Meeting',
+        'Personal',
+        'Shopping',
+        'Ideas',
+        'Travel',
+        'Finance',
+        'Health',
+        'Important',
+        'Todo',
+      )
+      .optional(),
+  }),
+};
+
+export const updateNoteSchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(1),
+    content: Joi.string().allow('').optional(),
+    tag: Joi.string()
+      .valid(
+        'Work',
+        'Meeting',
+        'Personal',
+        'Shopping',
+        'Ideas',
+        'Travel',
+        'Finance',
+        'Health',
+        'Important',
+        'Todo',
+      )
+      .optional(),
+  }).min(1),
+  [Segments.PARAMS]: Joi.object({
+    noteId: Joi.string().custom(objectIdValidator).required(),
+  }),
+};

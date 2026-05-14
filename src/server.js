@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import helmet from 'helmet';
+import { errors } from 'celebrate';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -16,12 +17,13 @@ app.use(express.json());
 app.use(helmet());
 app.use(
   cors({
-    method: ['GET', 'POST', 'PATCH', 'DELETE'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     origin: '*',
   }),
 );
 
 app.use(notesRoutes);
+app.use(errors());
 app.use(notFoundHandler);
 app.use(errorHandler);
 
